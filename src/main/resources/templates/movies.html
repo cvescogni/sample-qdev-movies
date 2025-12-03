@@ -3,21 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Movies This Month</title>
+    <title>Free Movies This Month - Pirate's Treasure Chest</title>
     <link rel="stylesheet" th:href="@{/css/movies.css}">
 </head>
 <body>
     <div class="container">
-        <h1>Free Movies This Month</h1>
-        <div class="movies-grid">
+        <h1>🏴‍☠️ Pirate's Movie Treasure Chest 🏴‍☠️</h1>
+        <p class="pirate-greeting">Ahoy matey! Welcome to the finest collection of films on the seven seas!</p>
+        
+        <!-- Search Form -->
+        <div class="search-container">
+            <h2>🔍 Search for Treasure (Movies)</h2>
+            <form method="GET" action="/movies" class="search-form">
+                <div class="search-row">
+                    <div class="search-field">
+                        <label for="name">Movie Name:</label>
+                        <input type="text" id="name" name="name" 
+                               th:value="${searchName}" 
+                               placeholder="Enter movie name, ye scurvy dog...">
+                    </div>
+                    <div class="search-field">
+                        <label for="id">Movie ID:</label>
+                        <input type="number" id="id" name="id" 
+                               th:value="${searchId}" 
+                               placeholder="Enter ID number...">
+                    </div>
+                    <div class="search-field">
+                        <label for="genre">Genre:</label>
+                        <select id="genre" name="genre">
+                            <option value="">All Genres</option>
+                            <option th:each="genreOption : ${allGenres}" 
+                                    th:value="${genreOption}" 
+                                    th:text="${genreOption}"
+                                    th:selected="${genreOption == searchGenre}">Genre</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="search-buttons">
+                    <button type="submit" class="search-btn">⚓ Search the Seas!</button>
+                    <a href="/movies" class="clear-btn">🧭 Show All Movies</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Search Results Info -->
+        <div th:if="${searchPerformed}" class="search-results-info">
+            <div th:if="${noResults}" class="no-results">
+                <h3>🏴‍☠️ No Treasure Found!</h3>
+                <p th:text="${pirateMessage}">No movies found with those search terms.</p>
+                <div class="pirate-advice">
+                    <p>💡 <strong>Pirate's Tip:</strong> Try searching with different terms or broaden yer search, matey!</p>
+                </div>
+            </div>
+            <div th:unless="${noResults}" class="results-found">
+                <h3>🎬 Treasure Found!</h3>
+                <p>Arrr! Found <span th:text="${#lists.size(movies)}">0</span> movies matching yer search criteria, ye savvy sailor!</p>
+                <div class="search-summary">
+                    <span th:if="${searchName and !#strings.isEmpty(searchName)}">
+                        📽️ Name: "<span th:text="${searchName}"></span>"
+                    </span>
+                    <span th:if="${searchId and searchId > 0}">
+                        🆔 ID: <span th:text="${searchId}"></span>
+                    </span>
+                    <span th:if="${searchGenre and !#strings.isEmpty(searchGenre)}">
+                        🎭 Genre: "<span th:text="${searchGenre}"></span>"
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Movies Grid -->
+        <div class="movies-grid" th:if="${!noResults}">
             <div class="movie-card" th:each="movie : ${movies}">
                 <div class="movie-icon" th:text="${movie.icon}">🎬</div>
                 <h3 th:text="${movie.movieName}">Movie Title</h3>
                 <div class="movie-details">
-                    <p class="director">Director: <span th:text="${movie.director}">Director Name</span></p>
-                    <p class="year">Year: <span th:text="${movie.year}">2023</span></p>
-                    <p class="genre">Genre: <span th:text="${movie.genre}">Drama</span></p>
-                    <p class="duration">Duration: <span th:text="${movie.duration}">120</span> minutes</p>
+                    <p class="director">Captain (Director): <span th:text="${movie.director}">Director Name</span></p>
+                    <p class="year">Year Sailed: <span th:text="${movie.year}">2023</span></p>
+                    <p class="genre">Adventure Type: <span th:text="${movie.genre}">Drama</span></p>
+                    <p class="duration">Journey Length: <span th:text="${movie.duration}">120</span> minutes</p>
                 </div>
                 <div class="rating">
                     <span class="stars">
@@ -26,8 +90,13 @@
                     </span>
                     <span class="rating-score" th:text="${#numbers.formatDecimal(movie.imdbRating, 1, 1)} + '/5'">5.0/5</span>
                 </div>
-                <a th:href="@{/movies/{id}/details(id=${movie.id})}" class="details-btn">View Details</a>
+                <a th:href="@{/movies/{id}/details(id=${movie.id})}" class="details-btn">🗺️ Explore This Treasure</a>
             </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="pirate-footer">
+            <p>⚓ May fair winds fill yer sails and great movies fill yer evenings! ⚓</p>
         </div>
     </div>
 </body>
